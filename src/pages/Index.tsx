@@ -1,13 +1,40 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import LoginScreen from "@/components/LoginScreen";
+import BlockGame from "@/components/BlockGame";
+import Leaderboard from "@/components/Leaderboard";
+
+type Screen = "login" | "game" | "leaderboard";
 
 const Index = () => {
+  const [screen, setScreen] = useState<Screen>("login");
+  const [playerEmail, setPlayerEmail] = useState("");
+  const [playerName, setPlayerName] = useState("");
+
+  const handleStart = (email: string, name: string) => {
+    setPlayerEmail(email);
+    setPlayerName(name);
+    setScreen("game");
+  };
+
+  if (screen === "leaderboard") {
+    return <Leaderboard onBack={() => setScreen("login")} />;
+  }
+
+  if (screen === "game") {
+    return (
+      <BlockGame
+        email={playerEmail}
+        displayName={playerName}
+        onBack={() => setScreen("login")}
+      />
+    );
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <LoginScreen
+      onStart={handleStart}
+      onViewLeaderboard={() => setScreen("leaderboard")}
+    />
   );
 };
 
