@@ -24,22 +24,13 @@ const Leaderboard = ({ onBack }: LeaderboardProps) => {
         .order("score", { ascending: false });
 
       if (data) {
-        // Group by email, keep best score
-        const bestScores = new Map<string, LeaderboardEntry>();
-        for (const row of data) {
-          const existing = bestScores.get(row.email);
-          if (!existing || row.score > existing.best_score) {
-            bestScores.set(row.email, {
-              email: row.email,
-              display_name: row.display_name,
-              best_score: row.score,
-            });
-          }
-        }
-        const sorted = Array.from(bestScores.values()).sort(
-          (a, b) => b.best_score - a.best_score
+        setEntries(
+          data.map((row) => ({
+            email: row.email,
+            display_name: row.display_name,
+            best_score: row.score,
+          }))
         );
-        setEntries(sorted);
       }
       setLoading(false);
     };
