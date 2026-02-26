@@ -6,6 +6,7 @@ interface BlockGameProps {
   email: string;
   displayName: string;
   onBack: () => void;
+  onViewLeaderboard: () => void;
 }
 
 interface Block {
@@ -38,7 +39,7 @@ const getBlockColor = (i: number) => {
   return `hsl(${hue}, 80%, 55%)`;
 };
 
-const BlockGame = ({ email, displayName, onBack }: BlockGameProps) => {
+const BlockGame = ({ email, displayName, onBack, onViewLeaderboard }: BlockGameProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameStateRef = useRef({
     stack: [] as Block[],
@@ -341,24 +342,10 @@ const BlockGame = ({ email, displayName, onBack }: BlockGameProps) => {
 
       ctx.restore();
 
-      // Game over overlay
+      // Game over - just darken canvas, HTML overlay handles the rest
       if (gs.gameOver) {
-        ctx.fillStyle = "rgba(0,0,0,0.7)";
+        ctx.fillStyle = "rgba(0,0,0,0.85)";
         ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-        ctx.fillStyle = "#ff8800";
-        ctx.font = "bold 36px Orbitron, sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillText("GAME OVER", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 40);
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "24px Orbitron, sans-serif";
-        ctx.fillText(`Score: ${gs.score}`, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 10);
-        ctx.font = "16px Space Grotesk, sans-serif";
-        ctx.fillStyle = "#999";
-        ctx.fillText(
-          "Tap or press Space to restart",
-          CANVAS_WIDTH / 2,
-          CANVAS_HEIGHT / 2 + 60
-        );
       }
 
       animRef.current = requestAnimationFrame(render);
@@ -386,13 +373,55 @@ const BlockGame = ({ email, displayName, onBack }: BlockGameProps) => {
         </div>
       </div>
 
-      <canvas
-        ref={canvasRef}
-        width={CANVAS_WIDTH}
-        height={CANVAS_HEIGHT}
-        className="rounded-lg border border-border"
-        style={{ touchAction: "none", maxWidth: "100%", background: "#0a0a0a" }}
-      />
+      <div className="relative">
+        <canvas
+          ref={canvasRef}
+          width={CANVAS_WIDTH}
+          height={CANVAS_HEIGHT}
+          className="rounded-lg border border-border"
+          style={{ touchAction: "none", maxWidth: "100%", background: "#0a0a0a" }}
+        />
+
+        {gameOver && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center px-6">
+            <span className="text-4xl mb-4">🎯</span>
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground text-center leading-tight mb-1">
+              Experience the Reliable Way of Hiring with
+            </h2>
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-primary text-center mb-6">
+              Peepal Consulting
+            </h2>
+
+            <a
+              href="https://www.peepalconsulting.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mb-8 rounded-lg bg-primary px-10 py-4 font-display text-lg font-bold uppercase tracking-wider text-primary-foreground transition-opacity hover:opacity-90"
+            >
+              Learn More
+            </a>
+
+            <p className="text-muted-foreground text-sm mb-1">
+              Final Score: <span className="font-display font-bold text-primary">{score}</span>
+            </p>
+
+            <div className="mt-6 flex gap-4">
+              <button
+                onClick={() => initGame()}
+                className="rounded-lg border border-border px-6 py-3 font-display text-sm font-bold uppercase tracking-wider text-foreground transition-colors hover:bg-secondary"
+              >
+                Play Again
+              </button>
+              <button
+                onClick={onViewLeaderboard}
+                className="rounded-lg border border-primary px-6 py-3 font-display text-sm font-bold uppercase tracking-wider text-primary transition-colors hover:bg-primary/10"
+              >
+                🏆 Leaderboard
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {!gameOver && (
         <p className="mt-4 text-sm text-muted-foreground">
