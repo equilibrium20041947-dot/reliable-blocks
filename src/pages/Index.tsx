@@ -26,6 +26,7 @@ const Index = () => {
         email={playerEmail}
         displayName={playerName}
         onBack={() => setScreen("login")}
+        onViewLeaderboard={() => setScreen("leaderboard")}
       />
     );
   }
