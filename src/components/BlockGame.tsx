@@ -393,7 +393,7 @@ const BlockGame = ({ email, displayName, onBack, onViewLeaderboard }: BlockGameP
             </h2>
 
             <a
-              href="https://www.peepalconsulting.com"
+              href="https://peepalconsulting.com/the-peepal-way-of-hiring/"
               target="_blank"
               rel="noopener noreferrer"
               className="mb-8 rounded-lg bg-primary px-10 py-4 font-display text-lg font-bold uppercase tracking-wider text-primary-foreground transition-opacity hover:opacity-90"
