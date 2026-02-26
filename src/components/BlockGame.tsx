@@ -140,11 +140,24 @@ const BlockGame = ({ email, displayName, onBack, onViewLeaderboard }: BlockGameP
       // Submit score
       if (!gs.scoreSubmitted) {
         gs.scoreSubmitted = true;
-        await supabase.from("scores").insert({
-          email,
-          display_name: displayName,
-          score: gs.score,
-        });
+        const { data: existing } = await supabase
+          .from("scores")
+          .select("score")
+          .eq("email", email)
+          .single();
+
+        if (!existing) {
+          await supabase.from("scores").insert({
+            email,
+            display_name: displayName,
+            score: gs.score,
+          });
+        } else if (gs.score > existing.score) {
+          await supabase
+            .from("scores")
+            .update({ score: gs.score, display_name: displayName })
+            .eq("email", email);
+        }
       }
       return;
     }
